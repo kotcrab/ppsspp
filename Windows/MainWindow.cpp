@@ -70,6 +70,8 @@
 #include "UI/OnScreenDisplay.h"
 #include "UI/GameSettingsScreen.h"
 
+#include "Core/SocketDbg.h"
+
 #define MOUSEEVENTF_FROMTOUCH_NOPEN 0xFF515780 //http://msdn.microsoft.com/en-us/library/windows/desktop/ms703320(v=vs.85).aspx
 #define MOUSEEVENTF_MASK_PLUS_PENTOUCH 0xFFFFFF80
 
@@ -169,6 +171,8 @@ namespace MainWindow
 		wcdisp.hIcon = 0;
 		wcdisp.hIconSm = 0;
 		RegisterClassEx(&wcdisp);
+
+		SocketDbg::startServer();
 	}
 
 	void SavePosition() {
@@ -517,6 +521,8 @@ namespace MainWindow
 
 		memoryWindow[0] = new CMemoryDlg(MainWindow::GetHInstance(), MainWindow::GetHWND(), currentDebugMIPS);
 		DialogManager::AddDlg(memoryWindow[0]);
+		memoryWindow[1] = new CMemoryDlg(MainWindow::GetHInstance(), MainWindow::GetHWND(), currentDebugMIPS);
+		DialogManager::AddDlg(memoryWindow[1]);
 	}
 
 	void DestroyDebugWindows() {
@@ -534,6 +540,11 @@ namespace MainWindow
 		if (memoryWindow[0])
 			delete memoryWindow[0];
 		memoryWindow[0] = 0;
+
+		DialogManager::RemoveDlg(memoryWindow[1]);
+		if (memoryWindow[1])
+			delete memoryWindow[1];
+		memoryWindow[1] = 0;
 	}
 
 	LRESULT CALLBACK DisplayProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
@@ -879,6 +890,8 @@ namespace MainWindow
 				disasmWindow[0]->NotifyMapLoaded();
 			if (memoryWindow[0])
 				memoryWindow[0]->NotifyMapLoaded();
+			if (memoryWindow[1])
+				memoryWindow[1]->NotifyMapLoaded();
 
 			if (disasmWindow[0])
 				disasmWindow[0]->UpdateDialog();

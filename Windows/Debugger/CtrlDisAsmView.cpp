@@ -949,6 +949,13 @@ void CtrlDisAsmView::onMouseUp(WPARAM wParam, LPARAM lParam, int button)
 				W32Util::CopyTextToClipboard(wnd, temp);
 			}
 			break;
+		case ID_DISASM_COPYPHYSICALADDRESS:
+			{
+				char temp[32];
+				sprintf(temp, "0x%08X", curAddress - 0x08804000);
+				W32Util::CopyTextToClipboard(wnd, temp);
+			}
+			break;
 		case ID_DISASM_SETPCTOHERE:
 			debugger->setPC(curAddress);
 			redraw();

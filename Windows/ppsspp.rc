@@ -641,6 +641,7 @@ BEGIN
     POPUP "disasm"
     BEGIN
         MENUITEM "Copy Address",               ID_DISASM_COPYADDRESS
+        MENUITEM "Copy Physical Address",      ID_DISASM_COPYPHYSICALADDRESS
         MENUITEM "Copy Instruction (Hex)",     ID_DISASM_COPYINSTRUCTIONHEX
         MENUITEM "Copy Instruction (Disasm)",  ID_DISASM_COPYINSTRUCTIONDISASM
         MENUITEM "Disassemble to File",        ID_DISASM_DISASSEMBLETOFILE

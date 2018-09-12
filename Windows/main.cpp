@@ -438,6 +438,7 @@ int WINAPI WinMain(HINSTANCE _hInstance, HINSTANCE hPrevInstance, LPSTR szCmdLin
 	bool debugLogLevel = false;
 
 	const std::wstring gpuBackend = L"--graphics=";
+	const std::wstring debuggerPort = L"--debuggerPort=";
 
 	// The rest is handled in NativeInit().
 	for (size_t i = 1; i < wideArgs.size(); ++i) {
@@ -461,6 +462,10 @@ int WINAPI WinMain(HINSTANCE _hInstance, HINSTANCE hPrevInstance, LPSTR szCmdLin
 
 			if (wideArgs[i] == L"--windowed")
 				g_Config.bFullScreen = false;
+
+			if (wideArgs[i].find(debuggerPort) != std::wstring::npos) {
+				g_Config.remoteDebuggerPort = std::wstring(wideArgs[i]).substr(debuggerPort.length());
+			}
 
 			if (wideArgs[i].find(gpuBackend) != std::wstring::npos && wideArgs[i].size() > gpuBackend.size()) {
 				const std::wstring restOfOption = wideArgs[i].substr(gpuBackend.size());

@@ -31,7 +31,7 @@
 #include <windowsx.h>
 #include <commctrl.h>
 
-static const int numCPUs = 1;
+static const int numCPUs = 2;
 
 // How long (max) to wait for Core to pause before clearing temp breakpoints.
 const int TEMP_BREAKPOINT_WAIT_MS = 100;
@@ -632,6 +632,8 @@ BOOL CDisasm::DlgProc(UINT message, WPARAM wParam, LPARAM lParam)
 			{
 				displayExpressionError(GetDlgItem(m_hDlg,IDC_ADDRESS));
 			} else {
+				if (addr < 0x00200000) //allow to enter unrelocated address and have it converted into physical address
+					addr += 0x08804000;
 				ptr->gotoAddr(addr);
 				SetFocus(GetDlgItem(m_hDlg, IDC_DISASMVIEW));
 			}

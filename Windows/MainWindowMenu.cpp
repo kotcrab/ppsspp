@@ -842,6 +842,8 @@ namespace MainWindow {
 
 				if (memoryWindow[0])
 					memoryWindow[0]->NotifyMapLoaded();
+				if (memoryWindow[1])
+					memoryWindow[1]->NotifyMapLoaded();
 			}
 			break;
 
@@ -852,6 +854,7 @@ namespace MainWindow {
 
 		case ID_DEBUG_LOADSYMFILE:
 			if (W32Util::BrowseForFileName(true, hWnd, L"Load .sym", 0, L"Symbols\0*.sym\0All files\0*.*\0\0", L"sym", fn)) {
+				g_symbolMap->Clear();
 				g_symbolMap->LoadNocashSym(fn.c_str());
 
 				if (disasmWindow[0])
@@ -859,6 +862,8 @@ namespace MainWindow {
 
 				if (memoryWindow[0])
 					memoryWindow[0]->NotifyMapLoaded();
+				if (memoryWindow[1])
+					memoryWindow[1]->NotifyMapLoaded();
 			}
 			break;
 
@@ -879,19 +884,30 @@ namespace MainWindow {
 					memoryWindow[i]->NotifyMapLoaded();
 			break;
 
-		case ID_DEBUG_DISASSEMBLY:
+		case ID_DEBUG_DISASSEMBLY: {
+			g_symbolMap->Clear();
+			auto file = PSP_CoreParameter().fileToStart;
+			g_symbolMap->LoadNocashSym("E:\\_Projects\\Fate\\TMP\\symbols\\ccc_symbols.sym");
+
+			if (disasmWindow[0])
+				disasmWindow[0]->NotifyMapLoaded();
+
+			if (memoryWindow[0])
+				memoryWindow[0]->NotifyMapLoaded();
+			if (memoryWindow[1])
+				memoryWindow[1]->NotifyMapLoaded();
 			if (disasmWindow[0])
 				disasmWindow[0]->Show(true);
 			break;
-
+		}
 		case ID_DEBUG_GEDEBUGGER:
 			if (geDebuggerWindow)
 				geDebuggerWindow->Show(true);
 			break;
 
 		case ID_DEBUG_MEMORYVIEW:
-			if (memoryWindow[0])
-				memoryWindow[0]->Show(true);
+			if (memoryWindow[1])
+				memoryWindow[1]->Show(true);
 			break;
 
 		case ID_DEBUG_EXTRACTFILE:

@@ -27,6 +27,7 @@
 #include "Core/MIPS/MIPSDebugInterface.h"
 #include "Core/MIPS/JitCommon/JitCommon.h"
 #include "Core/CoreTiming.h"
+#include "Core/SocketDbg.h"
 
 static std::mutex breakPointsMutex_;
 std::vector<BreakPoint> CBreakPoints::breakPoints_;
@@ -360,10 +361,12 @@ BreakAction CBreakPoints::ExecBreakPoint(u32 addr) {
 				CBreakPoints::EvaluateLogFormat(currentDebugMIPS, info.logFormat, formatted);
 				NOTICE_LOG(JIT, "BKP PC=%08x: %s", addr, formatted.c_str());
 			}
+			SocketDbg::breakpointLogged(addr);
 		}
 		if (info.result & BREAK_ACTION_PAUSE) {
 			Core_EnableStepping(true);
 			host->SetDebugMode(true);
+			SocketDbg::breakpointPaused(addr);
 		}
 
 		return info.result;

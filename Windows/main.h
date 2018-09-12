@@ -24,7 +24,7 @@
 
 #include "Common/CommonWindows.h"
 
-#define MAX_CPUCOUNT 1
+#define MAX_CPUCOUNT 2
 
 extern CDisasm *disasmWindow[MAX_CPUCOUNT];
 extern CGEDebugger *geDebuggerWindow ;
