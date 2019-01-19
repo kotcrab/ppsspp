@@ -885,17 +885,17 @@ namespace MainWindow {
 			break;
 
 		case ID_DEBUG_DISASSEMBLY: {
-			g_symbolMap->Clear();
 			auto file = PSP_CoreParameter().fileToStart;
-			g_symbolMap->LoadNocashSym("E:\\_Projects\\Fate\\TMP\\symbols\\ccc_symbols.sym");
-
-			if (disasmWindow[0])
-				disasmWindow[0]->NotifyMapLoaded();
-
-			if (memoryWindow[0])
-				memoryWindow[0]->NotifyMapLoaded();
-			if (memoryWindow[1])
-				memoryWindow[1]->NotifyMapLoaded();
+			if (!file.empty()) {
+				g_symbolMap->Clear();
+				g_symbolMap->LoadNocashSym("E:\\_Projects\\Fate\\TMP\\symbols\\ccc_symbols.sym");
+				if (disasmWindow[0])
+					disasmWindow[0]->NotifyMapLoaded();
+				if (memoryWindow[0])
+					memoryWindow[0]->NotifyMapLoaded();
+				if (memoryWindow[1])
+					memoryWindow[1]->NotifyMapLoaded();
+			}
 			if (disasmWindow[0])
 				disasmWindow[0]->Show(true);
 			break;
