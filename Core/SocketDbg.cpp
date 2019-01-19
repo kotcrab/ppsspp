@@ -138,6 +138,21 @@ struct MemGetResponse {
 	MemGetResponse(u32 addr, u32 size) : id(0x3381), addr(addr), size(size) {}
 };
 
+struct MemSetRequest {
+	const i16 id;
+	const u32 addr;
+	const u32 size;
+	// memory[size] follows...
+	MemSetRequest(u32 addr, u32 size) : id(0x3382), addr(addr), size(size) {}
+};
+
+struct MemSetResponse {
+	const i16 id;
+	const u32 addr;
+	const u32 size;
+	MemSetResponse(u32 addr, u32 size) : id(0x3383), addr(addr), size(size) {}
+};
+
 #pragma pack(pop)
 
 class SocketStreamException : public std::runtime_error {
@@ -324,9 +339,22 @@ private:
 			const u32 addr = m_socketStream.readInt();
 			const u32 size = m_socketStream.readInt();
 			u8* buf = new u8[size];
+			auto memlock = Memory::Lock();
 			Memory::MemcpyUnchecked(buf, addr, size);
 			MemGetResponse response(addr, size);
 			sendResponse(&response, sizeof(response), buf, size);
+			delete[] buf;
+			break;
+		}
+		case 0x3382: { // MemSetRequest
+			const u32 addr = m_socketStream.readInt();
+			const u32 size = m_socketStream.readInt();
+			u8* buf = new u8[size];
+			m_socketStream.readFully(buf, size);
+			auto memlock = Memory::Lock();
+			Memory::MemcpyUnchecked(addr, buf, size);
+			MemSetResponse response(addr, size);
+			sendResponse(&response, sizeof(response));
 			delete[] buf;
 			break;
 		}
