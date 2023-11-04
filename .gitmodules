@@ -53,3 +53,6 @@
 [submodule "ext/libchdr"]
 	path = ext/libchdr
 	url = https://github.com/rtissera/libchdr.git
+[submodule "ext/imgui"]
+	path = ext/imgui
+	url = https://github.com/ocornut/imgui
