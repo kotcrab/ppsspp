@@ -18,6 +18,8 @@
 #include "Common/GPU/thin3d_create.h"
 #include "Common/GPU/D3D11/D3D11Loader.h"
 
+#include "imgui_impl_dx11.h"
+
 #ifdef __MINGW32__
 #undef __uuidof
 #define __uuidof(type) IID_##type
@@ -103,6 +105,8 @@ bool D3D11Context::Init(HINSTANCE hInst, HWND wnd, std::string *error_message) {
 			}
 			pFactory->Release();
 		}
+
+		ImGui_ImplDX11_Init(device_, context_);
 	}
 
 	if (FAILED(hr)) {

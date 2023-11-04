@@ -84,6 +84,8 @@
 #include "UI/OnScreenDisplay.h"
 #include "UI/GameSettingsScreen.h"
 
+#include "imgui_impl_win32.h"
+
 #define MOUSEEVENTF_FROMTOUCH_NOPEN 0xFF515780 //http://msdn.microsoft.com/en-us/library/windows/desktop/ms703320(v=vs.85).aspx
 #define MOUSEEVENTF_MASK_PLUS_PENTOUCH 0xFFFFFF80
 
@@ -116,6 +118,8 @@ static std::wstring windowTitle;
 #define CURSORUPDATE_INTERVAL_MS 1000
 #define CURSORUPDATE_MOVE_TIMESPAN_MS 500
 #define WHEELRELEASE_DELAY_MS 16
+
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 namespace MainWindow
 {
@@ -609,6 +613,9 @@ namespace MainWindow
 	}
 
 	LRESULT CALLBACK DisplayProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
+		if (ImGui_ImplWin32_WndProcHandler(hWnd, message, wParam, lParam))
+			return true;
+		
 		static bool firstErase = true;
 
 		switch (message) {
@@ -635,6 +642,9 @@ namespace MainWindow
 
 		// Mouse input. We send asynchronous touch events for minimal latency.
 		case WM_LBUTTONDOWN:
+			if (ImGui::GetIO().WantCaptureMouse) {
+				break;
+			}
 			if (!touchHandler.hasTouch() ||
 				(GetMessageExtraInfo() & MOUSEEVENTF_MASK_PLUS_PENTOUCH) != MOUSEEVENTF_FROMTOUCH_NOPEN)
 			{
@@ -705,6 +715,9 @@ namespace MainWindow
 			break;
 
 		case WM_LBUTTONUP:
+			if (ImGui::GetIO().WantCaptureMouse) {
+				break;
+			}
 			if (!touchHandler.hasTouch() ||
 				(GetMessageExtraInfo() & MOUSEEVENTF_MASK_PLUS_PENTOUCH) != MOUSEEVENTF_FROMTOUCH_NOPEN)
 			{
@@ -767,6 +780,9 @@ namespace MainWindow
 	}
 
 	LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)	{
+		if (ImGui_ImplWin32_WndProcHandler(hWnd, message, wParam, lParam))
+			return true;
+
 		LRESULT darkResult = 0;
 		if (UAHDarkModeWndProc(hWnd, message, wParam, lParam, &darkResult)) {
 			return darkResult;
@@ -968,12 +984,18 @@ namespace MainWindow
 			break;
 
 		case WM_INPUT:
+			if (ImGui::GetIO().WantCaptureKeyboard) {
+				break;
+			}
 			return WindowsRawInput::Process(hWnd, wParam, lParam);
 
 		// TODO: Could do something useful with WM_INPUT_DEVICE_CHANGE?
 
 		// Not sure why we are actually getting WM_CHAR even though we use RawInput, but alright..
 		case WM_CHAR:
+			if (ImGui::GetIO().WantCaptureKeyboard) {
+				break;
+			}
 			return WindowsRawInput::ProcessChar(hWnd, wParam, lParam);
 
 		case WM_DEVICECHANGE:

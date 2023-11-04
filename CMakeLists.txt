@@ -866,6 +866,11 @@ add_library(Common STATIC
 	Common/TimeUtil.cpp
 	Common/TimeUtil.h
 	Common/Battery/Battery.h
+	UI/ImMemoryView.hpp
+	UI/ImStructViewer.cpp
+	UI/ImType.h
+	UI/ImTypeLoader.h
+	UI/ImTypeLoader.cpp
 )
 
 include_directories(Common)
@@ -981,6 +986,19 @@ else()
 	include_directories(ext/zlib)
 	set(ZLIB_LIBRARY zlib)
 endif()
+
+add_library(imgui STATIC
+		ext/imgui/imgui.cpp
+		ext/imgui/imgui_demo.cpp
+		ext/imgui/imgui_draw.cpp
+		ext/imgui/imgui_tables.cpp
+		ext/imgui/imgui_widgets.cpp
+		ext/imgui/backends/imgui_impl_win32.cpp
+		ext/imgui/backends/imgui_impl_dx11.cpp
+)
+include_directories(ext/imgui)
+include_directories(ext/imgui/backends)
+set(IMGUI_LIBRARY imgui)
 
 add_library(cityhash STATIC
 	ext/cityhash/city.cpp
@@ -1523,7 +1541,7 @@ if(ANDROID OR (LINUX AND ARM_DEVICE) OR (LINUX AND RISCV64) OR (LINUX AND LOONGA
 	set(ATOMIC_LIB atomic)
 endif()
 
-target_link_libraries(native ${LIBZIP_LIBRARY} ${PNG_LIBRARIES} ${BASISU_LIBRARIES} ${ZLIB_LIBRARY} vma gason udis86 ${RT_LIB} ${nativeExtraLibs} ${ATOMIC_LIB} Common)
+target_link_libraries(native ${LIBZIP_LIBRARY} ${PNG_LIBRARIES} ${BASISU_LIBRARIES} ${ZLIB_LIBRARY} ${IMGUI_LIBRARY} vma gason udis86 ${RT_LIB} ${nativeExtraLibs} ${ATOMIC_LIB} Common)
 if(TARGET Ext::GLEW)
 	target_link_libraries(native Ext::GLEW)
 endif()

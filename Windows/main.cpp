@@ -84,6 +84,8 @@
 #include "Windows/WindowsHost.h"
 #include "Windows/main.h"
 
+#include "imgui.h"
+#include "imgui_impl_win32.h"
 
 // Nvidia OpenGL drivers >= v302 will check if the application exports a global
 // variable named NvOptimusEnablement to know if it should run the app in high
@@ -984,6 +986,13 @@ int WINAPI WinMain(HINSTANCE _hInstance, HINSTANCE hPrevInstance, LPSTR szCmdLin
 	MainWindow::Show(_hInstance);
 
 	HWND hwndMain = MainWindow::GetHWND();
+
+	ImGui::CreateContext();
+	ImGui_ImplWin32_Init(hwndMain);
+	ImGuiIO& io = ImGui::GetIO();
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+	//io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
 	//initialize custom controls
 	CtrlDisAsmView::init();

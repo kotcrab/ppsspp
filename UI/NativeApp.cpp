@@ -124,6 +124,11 @@
 #include "UI/RemoteISOScreen.h"
 #include "UI/Theme.h"
 
+#include "imgui.h"
+#include "imgui_impl_win32.h"
+#include "imgui_impl_dx11.h"
+#include "UI/ImStructViewer.h"
+
 #if defined(USING_QT_UI)
 #include <QFontDatabase>
 #endif
@@ -187,6 +192,8 @@ WindowsAudioBackend *winAudioBackend;
 #endif
 
 std::thread *graphicsLoadThread;
+
+ImStructViewer structViewer;
 
 class PrintfLogger : public LogListener {
 public:
@@ -1085,6 +1092,10 @@ void NativeFrame(GraphicsContext *graphicsContext) {
 		startTime = time_now_d();
 	}
 
+	ImGui_ImplDX11_NewFrame();
+	ImGui_ImplWin32_NewFrame();
+	ImGui::NewFrame();
+
 	std::vector<PendingMessage> toProcess;
 	{
 		std::lock_guard<std::mutex> lock(pendingMutex);
@@ -1153,6 +1164,11 @@ void NativeFrame(GraphicsContext *graphicsContext) {
 
 	ui_draw2d.PopDrawMatrix();
 	ui_draw2d_front.PopDrawMatrix();
+
+	structViewer.Draw();
+
+	ImGui::Render();
+	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 
 	g_draw->EndFrame();
 
